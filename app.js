@@ -82,6 +82,8 @@ app.post('/', async (req, res) => {
         respuestaBot = "Lo siento, no entendí eso. Intenta escribiendo 'hola' o 'menu'.";
       }
       console.log(`Intentando responder a: ${from} usando el token: ${accessToken}`);
+        console.log(`url: https://graph.facebook.com/v21.0/${phoneNumberId}/messages``);
+      
       // Enviamos la respuesta
       await sendWhatsAppMessage(from, respuestaBot);
     }
