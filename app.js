@@ -81,7 +81,7 @@ app.post('/', async (req, res) => {
       } else {
         respuestaBot = "Lo siento, no entendí eso. Intenta escribiendo 'hola' o 'menu'.";
       }
-      console.log(`Intentando responder a: ${from} usando el token: ${accessToken ? "TOKEN_EXISTE" : "TOKEN_VACIO"}`);
+      console.log(`Intentando responder a: ${from} usando el token: ${accessToken}`);
       // Enviamos la respuesta
       await sendWhatsAppMessage(from, respuestaBot);
     }
