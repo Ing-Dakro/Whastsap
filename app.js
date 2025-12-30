@@ -60,7 +60,7 @@ app.post('/', async (req, res) => {
 
     if (message && message.type === 'text') {
       
-      const from = message.from;  
+      let from = message.from; 
       if (from.startsWith("521")) {
         from = "52" + from.substring(3);
       }
