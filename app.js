@@ -1,13 +1,13 @@
 const express = require('express');
-const axios = require('axios'); // Importamos axios
+const axios = require('axios');
 const app = express();
 
 app.use(express.json());
 
 const port = process.env.PORT || 3000;
 const verifyToken = process.env.VERIFY_TOKEN;
-const accessToken = process.env.ACCESS_TOKEN; // Tu Token de Meta
-const phoneNumberId = process.env.PHONE_NUMBER_ID; // El ID 938620692665249
+const accessToken = process.env.ACCESS_TOKEN; 
+const phoneNumberId = process.env.PHONE_NUMBER_ID; 
 
 // Función para enviar mensajes
 async function sendWhatsAppMessage(toNumber, text) {
@@ -30,7 +30,7 @@ async function sendWhatsAppMessage(toNumber, text) {
     console.log("¡Respuesta enviada con éxito! ID:", response.data.messages[0].id);
   } catch (error) {
     if (error.response) {
-      console.error("ERROR DE META:", error.response.data);
+      console.error("ERROR DE META:", JSON.stringify(error.response.data, null, 2));
     } else {
       console.error("ERROR DE RED/CODIGO:", error.message);
     }
@@ -52,24 +52,22 @@ app.post('/', async (req, res) => {
   const body = req.body;
 
   if (body.object === 'whatsapp_business_account') {
-    // Entramos a la estructura del mensaje
     const entry = body.entry?.[0];
     const changes = entry?.changes?.[0];
     const value = changes?.value;
     const message = value?.messages?.[0];
 
     if (message && message.type === 'text') {
-      
       let from = message.from; 
+      
+      // Corrección para números de México: Meta espera 52 + 10 dígitos
       if (from.startsWith("521")) {
         from = "52" + from.substring(3);
       }
 
-      const userText = message.text.body.toLowerCase(); // Texto del cliente
-
+      const userText = message.text.body.toLowerCase();
       console.log(`Mensaje de ${from}: ${userText}`);
 
-      // Lógica de Menú Simple
       let respuestaBot = "";
 
       if (userText.includes("hola")) {
@@ -81,10 +79,11 @@ app.post('/', async (req, res) => {
       } else {
         respuestaBot = "Lo siento, no entendí eso. Intenta escribiendo 'hola' o 'menu'.";
       }
-      console.log(`Intentando responder a: ${from} usando el token: ${accessToken}`);
-        console.log(`url: https://graph.facebook.com/v21.0/${phoneNumberId}/messages``);
+
+      // Logs de depuración corregidos
+      console.log(`Intentando responder a: ${from}`);
+      console.log(`URL destino: https://graph.facebook.com/v21.0/${phoneNumberId}/messages`);
       
-      // Enviamos la respuesta
       await sendWhatsAppMessage(from, respuestaBot);
     }
 
